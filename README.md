@@ -2,7 +2,7 @@
 
 [![Hex.pm](https://img.shields.io/hexpm/v/sashite_snn.svg)](https://hex.pm/packages/sashite_snn)
 [![Docs](https://img.shields.io/badge/hex-docs-blue.svg)](https://hexdocs.pm/sashite_snn)
-[![License](https://img.shields.io/hexpm/l/sashite_snn.svg)](https://github.com/sashite/snn.ex/blob/main/LICENSE.md)
+[![License](https://img.shields.io/hexpm/l/sashite_snn.svg)](https://github.com/sashite/snn.ex/blob/main/LICENSE)
 
 > **SNN** (Style Name Notation) implementation for Elixir.
 

@@ -39,7 +39,7 @@ defmodule Sashite.Snn.MixProject do
 
   defp package do
     [
-      files: ["lib", "mix.exs", "README.md", "LICENSE.md"],
+      files: ["lib", "mix.exs", "README.md", "LICENSE"],
       maintainers: ["Sashité"],
       licenses: ["Apache-2.0"],
       links: %{
@@ -53,7 +53,7 @@ defmodule Sashite.Snn.MixProject do
   defp docs do
     [
       main: "readme",
-      extras: ["README.md", "LICENSE.md"],
+      extras: ["README.md", "LICENSE"],
       source_ref: "v#{@version}",
       source_url: @source_url
     ]
