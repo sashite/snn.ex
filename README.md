@@ -133,9 +133,9 @@ SNN is designed for identifying game styles in various contexts:
 
 ## Related Specifications
 
-* [Game Protocol](https://sashite.dev/game-protocol/) – Conceptual foundation
-* [SNN Specification](https://sashite.dev/specs/snn/1.0.0/) – Official specification
-* [SIN](https://sashite.dev/specs/sin/) – Style Identifier Notation (compact single-character format)
+- [Game Protocol](https://sashite.dev/game-protocol/) — Conceptual foundation
+- [SNN Specification](https://sashite.dev/specs/snn/1.0.0/) — Official specification
+- [SNN Examples](https://sashite.dev/specs/snn/1.0.0/examples/) — Usage examples
 
 ## License
 

@@ -40,12 +40,12 @@ defmodule Sashite.Snn.MixProject do
   defp package do
     [
       files: ["lib", "mix.exs", "README.md", "LICENSE"],
-      maintainers: ["Sashité"],
+      maintainers: ["Cyril Kato"],
       licenses: ["Apache-2.0"],
       links: %{
         "GitHub" => @source_url,
-        "Sashité" => "https://sashite.dev",
-        "Spec" => "https://sashite.dev/specs/snn/1.0.0/"
+        "Specification" => "https://sashite.dev/specs/snn/1.0.0/",
+        "Documentation" => "https://hexdocs.pm/sashite_snn"
       }
     ]
   end
