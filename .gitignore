@@ -1,10 +1,17 @@
-/_build
-/cover
-/deps
-/doc
+# Build artifacts
+/_build/
+/deps/
+
+# Test and documentation
+/cover/
+/doc/
+/tmp/
+
+# Mix artifacts
 /.fetch
 erl_crash.dump
 *.ez
-*.beam
-/config/*.secret.exs
+sashite_snn-*.tar
+
+# Editor
 .elixir_ls/

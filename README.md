@@ -1,4 +1,4 @@
-# Sashite.Snn
+# snn.ex
 
 [![Hex.pm](https://img.shields.io/hexpm/v/sashite_snn.svg)](https://hex.pm/packages/sashite_snn)
 [![Docs](https://img.shields.io/badge/hex-docs-blue.svg)](https://hexdocs.pm/sashite_snn)
@@ -6,11 +6,17 @@
 
 > **SNN** (Style Name Notation) implementation for Elixir.
 
-## What is SNN?
-
-SNN (Style Name Notation) provides a human-readable naming system for game styles (Piece Styles) in abstract strategy board games. It uses PascalCase names with optional numeric suffixes to identify movement traditions or game variants.
+## Overview
 
 This library implements the [SNN Specification v1.0.0](https://sashite.dev/specs/snn/1.0.0/).
+
+### Implementation Constraints
+
+| Constraint | Value | Rationale |
+|------------|-------|-----------|
+| Max string length | 32 | Sufficient for realistic style names |
+
+These constraints enable bounded memory usage and safe parsing.
 
 ## Installation
 
@@ -19,117 +25,127 @@ Add `sashite_snn` to your list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:sashite_snn, "~> 1.0"}
+    {:sashite_snn, "~> 2.0"}
   ]
 end
-
 ```
-
-## SNN Format
-
-SNN tokens follow a strict structure: `[PascalCaseName][OptionalSuffix]`
-
-| Component | Rule | Examples |
-| --- | --- | --- |
-| **Start** | Must start with an Uppercase letter (`A`-`Z`) | `C`, `S`, `X` |
-| **Body** | Followed by optional letters (`A`-`Z`, `a`-`z`) | `Chess`, `Shogi` |
-| **Suffix** | Ends with optional digits (`0`-`9`) | `Chess960`, `G5` |
 
 ## Usage
 
-The API is designed to be idiomatic, leveraging pattern matching and protocols.
+### Parsing (String → StyleName)
 
-### Parsing
-
-The `parse/1` function validates the format and returns a tagged tuple with a struct.
+Convert an SNN string into a `StyleName` struct.
 
 ```elixir
-iex> Sashite.Snn.parse("Chess")
-{:ok, %Sashite.Snn{name: "Chess"}}
+alias Sashite.Snn.StyleName
 
-iex> Sashite.Snn.parse("Chess960")
-{:ok, %Sashite.Snn{name: "Chess960"}}
+# Standard parsing (returns {:ok, _} or {:error, _})
+{:ok, snn} = Sashite.Snn.parse("Chess")
+snn.name  # => "Chess"
 
-# Invalid inputs
-iex> Sashite.Snn.parse("chess") # Lowercase start
-{:error, :invalid_format}
+# With numeric suffix
+{:ok, snn} = Sashite.Snn.parse("Chess960")
+snn.name  # => "Chess960"
 
-iex> Sashite.Snn.parse("Chess_960") # Invalid char
-{:error, :invalid_format}
+# Bang version (raises on error)
+snn = Sashite.Snn.parse!("Shogi")
 
+# Invalid input returns error tuple
+{:error, :empty_input} = Sashite.Snn.parse("")
+{:error, :invalid_format} = Sashite.Snn.parse("chess")
 ```
 
-### Bang functions (Direct access)
+### Formatting (StyleName → String)
 
-Use `parse!/1` when you expect the input to be valid (e.g., constants).
+Convert a `StyleName` back to an SNN string.
 
 ```elixir
-iex> snn = Sashite.Snn.parse!("Shogi")
-%Sashite.Snn{name: "Shogi"}
+alias Sashite.Snn.StyleName
 
+# From StyleName struct
+snn = StyleName.new("Chess")
+StyleName.to_string(snn)  # => "Chess"
+
+# String interpolation (via String.Chars protocol)
+"Playing #{snn}"  # => "Playing Chess"
 ```
 
-### Protocol Implementation
-
-The struct implements `String.Chars`, allowing seamless interpolation.
+### Validation
 
 ```elixir
-iex> snn = Sashite.Snn.parse!("Xiangqi")
-iex> "Playing #{snn}"
-"Playing Xiangqi"
-
+# Boolean check
+Sashite.Snn.valid?("Chess")     # => true
+Sashite.Snn.valid?("Chess960")  # => true
+Sashite.Snn.valid?("chess")     # => false (lowercase start)
+Sashite.Snn.valid?("")          # => false (empty)
 ```
 
-### Validation Only
-
-If you only need a boolean check without creating a struct:
+### Accessing Data
 
 ```elixir
-iex> Sashite.Snn.valid?("Makruk")
-true
+snn = Sashite.Snn.parse!("Chess960")
 
-iex> Sashite.Snn.valid?("")
-false
-
+# Get the name (struct field)
+snn.name  # => "Chess960"
 ```
-
-## Regular Expression
-
-The library exposes the compiled regex used for validation, useful for embedding in other validation logic.
-
-```elixir
-iex> Regex.match?(Sashite.Snn.regex(), "Go")
-true
-
-```
-
-**Regex pattern:** `^[A-Z][a-zA-Z]*[0-9]*$`
-
-## Use Cases
-
-SNN is designed for identifying game styles in various contexts:
-
-* **Game variant identification** (`Chess960`, `CapablancaChess`)
-* **Multi-variant game engines**
-* **Hybrid game configurations** (e.g., "Player 1 uses `Chess` style, Player 2 uses `Shogi` style")
 
 ## API Reference
 
 ### Types
 
 ```elixir
-%Sashite.Snn{
-  name: String.t() # The validated SNN string
+# StyleName represents a validated SNN style name.
+%Sashite.Snn.StyleName{
+  name: String.t()  # The validated SNN string
 }
 
+# Create a StyleName from a valid name string.
+# Raises ArgumentError if the name is invalid.
+Sashite.Snn.StyleName.new(name)
 ```
 
-### Functions
+### Constants
 
-* `valid?/1` - Checks if a string conforms to the SNN format.
-* `parse/1` - Converts a string to an SNN struct (returns `{:ok, snn}` or `{:error, reason}`).
-* `parse!/1` - Same as parse but raises `ArgumentError` on failure.
-* `regex/0` - Returns the `Regex` used for validation.
+```elixir
+Sashite.Snn.Constants.max_string_length()  # => 32
+```
+
+### Parsing
+
+```elixir
+# Parses an SNN string into a StyleName.
+# Returns {:ok, style_name} or {:error, reason}.
+@spec Sashite.Snn.parse(String.t()) :: {:ok, StyleName.t()} | {:error, atom()}
+
+# Parses an SNN string into a StyleName.
+# Raises ArgumentError if the string is not valid.
+@spec Sashite.Snn.parse!(String.t()) :: StyleName.t()
+```
+
+### Validation
+
+```elixir
+# Reports whether string is a valid SNN style name.
+@spec Sashite.Snn.valid?(String.t()) :: boolean()
+```
+
+### Errors
+
+Parsing errors are returned as atoms:
+
+| Atom | Cause |
+|------|-------|
+| `:empty_input` | String length is 0 |
+| `:input_too_long` | String exceeds 32 characters |
+| `:invalid_format` | Does not match SNN format |
+
+## Design Principles
+
+- **Bounded values**: Maximum string length prevents resource exhaustion
+- **Struct-based**: `StyleName` struct enables pattern matching and encapsulation
+- **Elixir idioms**: `{:ok, _}` / `{:error, _}` tuples, `parse!` bang variant
+- **Immutable data**: Struct fields are read-only after creation
+- **No dependencies**: Pure Elixir standard library only
 
 ## Related Specifications
 

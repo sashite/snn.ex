@@ -1,7 +1,7 @@
 defmodule Sashite.Snn.MixProject do
   use Mix.Project
 
-  @version "1.0.0"
+  @version "2.0.0"
   @source_url "https://github.com/sashite/snn.ex"
 
   def project do
@@ -10,11 +10,16 @@ defmodule Sashite.Snn.MixProject do
       version: @version,
       elixir: "~> 1.14",
       start_permanent: Mix.env() == :prod,
-      deps: deps(),
-      package: package(),
       description: description(),
+      package: package(),
+      deps: deps(),
       name: "Sashite.Snn",
-      docs: docs()
+      source_url: @source_url,
+      homepage_url: "https://sashite.dev/specs/snn/",
+      docs: [
+        main: "readme",
+        extras: ["README.md", "LICENSE"]
+      ]
     ]
   end
 
@@ -26,36 +31,29 @@ defmodule Sashite.Snn.MixProject do
 
   defp deps do
     [
+      {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
+      {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false},
       {:ex_doc, "~> 0.31", only: :dev, runtime: false}
     ]
   end
 
   defp description do
-    """
-    SNN (Style Name Notation) implementation for Elixir.
-    Provides strictly validated, human-readable names for game styles in abstract strategy games.
-    """
+    "SNN (Style Name Notation) implementation for Elixir. " <>
+      "Provides a rule-agnostic format for identifying game styles in abstract strategy " <>
+      "board games with immutable style name structs and functional programming principles."
   end
 
   defp package do
     [
-      files: ["lib", "mix.exs", "README.md", "LICENSE"],
-      maintainers: ["Cyril Kato"],
+      name: "sashite_snn",
+      files: ~w(lib .formatter.exs mix.exs README.md LICENSE),
       licenses: ["Apache-2.0"],
       links: %{
         "GitHub" => @source_url,
         "Specification" => "https://sashite.dev/specs/snn/1.0.0/",
         "Documentation" => "https://hexdocs.pm/sashite_snn"
-      }
-    ]
-  end
-
-  defp docs do
-    [
-      main: "readme",
-      extras: ["README.md", "LICENSE"],
-      source_ref: "v#{@version}",
-      source_url: @source_url
+      },
+      maintainers: ["Cyril Kato"]
     ]
   end
 end
